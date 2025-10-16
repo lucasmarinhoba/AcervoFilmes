@@ -1,16 +1,26 @@
-all: main
-
+# Compilador e flags
 CC = clang
-override CFLAGS += -g -Wno-everything -pthread -lm
+CFLAGS = -g -Wno-everything -pthread -lm
 
-SRCS = $(shell find . -name '.ccls-cache' -type d -prune -o -type f -name '*.c' -print)
-HEADERS = $(shell find . -name '.ccls-cache' -type d -prune -o -type f -name '*.h' -print)
+# Arquivos fonte e headers
+SRCS = $(wildcard src/*.c)
+HEADERS = $(wildcard src/*.h)
 
-main: $(SRCS) $(HEADERS)
-	$(CC) $(CFLAGS) $(SRCS) -o "$@"
+# Nome do executável
+TARGET = main
+TARGET_DEBUG = main-debug
 
-main-debug: $(SRCS) $(HEADERS)
-	$(CC) $(CFLAGS) -O0 $(SRCS) -o "$@"
+# Regra padrão
+all: $(TARGET)
 
+# Compila versão normal
+$(TARGET): $(SRCS) $(HEADERS)
+	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET)
+
+# Compila versão debug
+$(TARGET_DEBUG): $(SRCS) $(HEADERS)
+	$(CC) $(CFLAGS) -O0 $(SRCS) -o $(TARGET_DEBUG)
+
+# Limpa executáveis
 clean:
-	rm -f main main-debug
+	rm -f $(TARGET) $(TARGET_DEBUG)
